@@ -82,13 +82,32 @@ body {
 }
 
 /* Touch-friendly tap targets on mobile */
-@media (pointer: coarse) and (max-width: 768px) {
-  nav button,
-  nav a,
+@media (pointer: coarse) {
+  button,
+  a,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
   .touch-target {
     min-height: 44px;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    min-width: 44px;
+  }
+  
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Bottom nav spacing on mobile */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  
+  /* Add padding for bottom nav bar */
+  .pb-bottom-nav {
+    padding-bottom: 72px;
   }
 }
 
