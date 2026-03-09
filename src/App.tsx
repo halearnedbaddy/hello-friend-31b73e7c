@@ -57,7 +57,6 @@ function App() {
               </Routes>
             </Suspense>
             <BottomNavBar />
-            </Suspense>
           </BrowserRouter>
         </AuthProvider>
       </CloudAuthProvider>
