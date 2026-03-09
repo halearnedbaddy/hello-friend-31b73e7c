@@ -56,7 +56,6 @@ export function usePushNotifications() {
         body,
         icon: icon || '/pwa-icon-192.png',
         badge: '/pwa-icon-192.png',
-        vibrate: [200, 100, 200],
       });
     }
   }, []);
