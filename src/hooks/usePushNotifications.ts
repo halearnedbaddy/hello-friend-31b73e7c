@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const ONESIGNAL_APP_ID_KEY = 'onesignal_app_id';
+
 
 interface PushState {
   isSupported: boolean;
