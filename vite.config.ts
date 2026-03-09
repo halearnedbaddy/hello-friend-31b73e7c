@@ -14,38 +14,53 @@ export default defineConfig(({ mode }) => {
       mode === 'development' && componentTagger(),
       VitePWA({
         registerType: 'prompt',
-        includeAssets: ['payloom-icon.png'],
+        includeAssets: ['payloom-icon.png', 'pwa-icon-192.png', 'pwa-icon-512.png'],
         manifest: {
           name: 'PayLoom Instants',
-          short_name: 'PayLoom Instants',
+          short_name: 'PayLoom',
           description: 'PayLoom Instants - Secure payment platform for safe transactions in Africa.',
-          theme_color: '#1a1a4e',
-          background_color: '#1a1a4e',
+          theme_color: '#250e52',
+          background_color: '#250e52',
           display: 'standalone',
           orientation: 'portrait',
           scope: '/',
           start_url: '/',
+          categories: ['finance', 'business'],
+          shortcuts: [
+            {
+              name: 'Seller Dashboard',
+              short_name: 'Seller',
+              url: '/seller',
+              icons: [{ src: '/pwa-icon-192.png', sizes: '192x192' }]
+            },
+            {
+              name: 'Buyer Dashboard',
+              short_name: 'Buyer',
+              url: '/buyer',
+              icons: [{ src: '/pwa-icon-192.png', sizes: '192x192' }]
+            }
+          ],
           icons: [
             {
-              src: '/payloom-icon.png',
+              src: '/pwa-icon-192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any'
             },
             {
-              src: '/payloom-icon.png',
+              src: '/pwa-icon-192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'maskable'
             },
             {
-              src: '/payloom-icon.png',
+              src: '/pwa-icon-512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any'
             },
             {
-              src: '/payloom-icon.png',
+              src: '/pwa-icon-512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable'
@@ -54,6 +69,7 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,jpeg,jpg,woff2}'],
+          navigateFallbackDenylist: [/^\/~oauth/],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
@@ -62,7 +78,29 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'supabase-cache',
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 // 24 hours
+                  maxAgeSeconds: 60 * 60 * 24
+                }
+              }
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365
+                }
+              }
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-webfonts',
+                expiration: {
+                  maxEntries: 30,
+                  maxAgeSeconds: 60 * 60 * 24 * 365
                 }
               }
             }
