@@ -4,6 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CloudAuthProvider } from "@/contexts/CloudAuthContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { BottomNavBar } from "@/components/BottomNavBar";
 
 // Lazy load all pages for faster initial load
 const HomePage = lazy(() => import("./pages/HomePage").then(m => ({ default: m.HomePage })));
@@ -55,6 +56,7 @@ function App() {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
+            <BottomNavBar />
           </BrowserRouter>
         </AuthProvider>
       </CloudAuthProvider>
