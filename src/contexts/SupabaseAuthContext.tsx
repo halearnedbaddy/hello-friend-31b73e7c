@@ -124,12 +124,24 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
       const response = await supabaseLoginWithEmail(email, password);
       if (response.success && response.data?.user) {
         const u = response.data!.user as User;
-        if (u.role !== 'admin') {
+
+        // Check user_roles table for admin role instead of relying on user object
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', u.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+
+        if (!roleData) {
           await supabaseLogout();
           setUser(null);
-          return { success: false, error: 'Access denied' };
+          return { success: false, error: 'Access denied. Admin credentials required.' };
         }
-        setUser(u);
+
+        const adminUser = { ...u, role: 'admin' as const };
+        setUser(adminUser);
+        localStorage.setItem('user', JSON.stringify(adminUser));
         return { success: true };
       }
       return { success: false, error: response.error || 'Login failed' };

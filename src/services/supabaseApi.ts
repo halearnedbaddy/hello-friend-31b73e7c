@@ -495,8 +495,8 @@ export async function createStore(data: { name: string; slug: string }) {
       seller_id: session.user.id,
       name: data.name,
       slug: data.slug,
-      status: "inactive" as StoreStatusDb,
-      visibility: "private",
+      status: "active" as StoreStatusDb,
+      visibility: "public",
     }])
     .select()
     .single();
