@@ -120,38 +120,44 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const adminLogin = useCallback(async (email: string, password: string) => {
-    if (useSupabaseOnly) {
-      const response = await supabaseLoginWithEmail(email, password);
-      if (response.success && response.data?.user) {
-        const u = response.data!.user as User;
+    try {
+      // Use direct Supabase auth instead of edge function to avoid project mismatch
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        // Check user_roles table for admin role instead of relying on user object
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', u.id)
-          .eq('role', 'admin')
-          .maybeSingle();
-
-        if (!roleData) {
-          await supabaseLogout();
-          setUser(null);
-          return { success: false, error: 'Access denied. Admin credentials required.' };
-        }
-
-        const adminUser = { ...u, role: 'admin' as const };
-        setUser(adminUser);
-        localStorage.setItem('user', JSON.stringify(adminUser));
-        return { success: true };
+      if (authError || !authData.user) {
+        return { success: false, error: authError?.message || 'Invalid credentials' };
       }
-      return { success: false, error: response.error || 'Login failed' };
-    }
-    const response = await api.adminLogin(email, password);
-    if (response.success && response.data?.user) {
-      setUser(response.data.user as User);
+
+      const u: User = {
+        id: authData.user.id,
+        name: authData.user.user_metadata?.name ?? authData.user.email ?? 'Admin',
+        email: authData.user.email,
+        role: 'admin',
+      };
+
+      // Check user_roles table for admin role
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authData.user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      if (!roleData) {
+        await supabase.auth.signOut();
+        setUser(null);
+        return { success: false, error: 'Access denied. Admin credentials required.' };
+      }
+
+      setUser(u);
+      localStorage.setItem('user', JSON.stringify(u));
       return { success: true };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Login failed' };
     }
-    return { success: false, error: response.error || 'Login failed' };
   }, []);
 
   const register = useCallback(async (data: { phone: string; name: string; email?: string; role?: string; otp: string }) => {
