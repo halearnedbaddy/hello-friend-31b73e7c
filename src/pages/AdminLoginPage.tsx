@@ -11,7 +11,7 @@ const loginSchema = z.object({
 
 export function AdminLoginPage() {
   const navigate = useNavigate();
-  const { adminLogin, logout } = useSupabaseAuth();
+  const { adminLogin } = useSupabaseAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
