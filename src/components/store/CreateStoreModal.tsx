@@ -70,8 +70,9 @@ export function CreateStoreModal({ isOpen, onClose, onStoreCreated }: CreateStor
       } else {
         setError(res.error || 'Failed to create store. Please try again.');
       }
-    } catch (err) {
-      setError('Failed to create store. Please try again.');
+    } catch (err: any) {
+      const msg = err?.message || 'Failed to create store. Please try again.';
+      setError(msg);
       console.error('Create store error:', err);
     } finally {
       setIsCreating(false);

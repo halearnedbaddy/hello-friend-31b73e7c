@@ -11,7 +11,7 @@ const loginSchema = z.object({
 
 export function AdminLoginPage() {
   const navigate = useNavigate();
-  const { adminLogin, logout } = useSupabaseAuth();
+  const { adminLogin } = useSupabaseAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -35,13 +35,6 @@ export function AdminLoginPage() {
       const response = await adminLogin(formData.email, formData.password);
 
       if (response.success) {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if ((user.role || '').toLowerCase() !== 'admin') {
-          setError('Access denied. Admin credentials required.');
-          await logout();
-          setIsLoading(false);
-          return;
-        }
         navigate('/admin');
       } else {
         setError(response.error || 'Invalid admin credentials');
